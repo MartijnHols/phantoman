@@ -147,7 +147,9 @@ class Phantoman extends \Codeception\Platform\Extension
     private function stopServer()
     {
         if ($this->resource !== null) {
-            $this->write("Stopping PhantomJS Server");
+            if ($this->config['debug']) {
+                $this->write("Stopping PhantomJS Server");
+            }
 
             // Wait till the server has been stopped
             $max_checks = 10;
@@ -163,8 +165,10 @@ class Phantoman extends \Codeception\Platform\Extension
 
                 // Check if the process has stopped yet
                 if (proc_get_status($this->resource)['running'] == false) {
-                    $this->writeln('');
-                    $this->writeln("PhantomJS server stopped");
+                    if ($this->config['debug']) {
+                        $this->writeln('');
+                        $this->writeln("PhantomJS server stopped");
+                    }
                     unset($this->resource);
                     break;
                 }
@@ -173,8 +177,10 @@ class Phantoman extends \Codeception\Platform\Extension
                     fclose($pipe);
                 }
                 proc_terminate($this->resource, 2);
-
-                $this->write('.');
+                
+                if ($this->config['debug']) {
+                    $this->write('.');
+                }
 
                 // Wait before checking again
                 sleep(1);
